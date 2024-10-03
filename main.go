@@ -22,8 +22,10 @@ func getList() []List {
 	return []List{l1, l2}
 }
 func main() {
+	fmt.Println("Welcome to Jo's coffee shop")
+	fmt.Println("Menu：")
 	lists := getList()
 	for i := 0; i < len(lists); i++ {
-		fmt.Println(lists[i])
+		fmt.Printf("%v.%v $%v\n", lists[i].productID, lists[i].productName, lists[i].price)
 	}
 }
