@@ -2,6 +2,8 @@ package main
 
 import "fmt"
 
+var restaurant string = "Jo's coffee shop!"
+
 type List struct {
 	productID   int
 	productName string
@@ -9,23 +11,39 @@ type List struct {
 }
 
 func getList() []List {
-	l1 := List{
-		productID:   1,
-		productName: "Latte",
-		price:       150,
+	return []List{
+		{
+			productID:   1,
+			productName: "Latte",
+			price:       150,
+		},
+		{
+			productID:   2,
+			productName: "Filter coffee",
+			price:       100,
+		},
 	}
-	l2 := List{
-		productID:   2,
-		productName: "Filter coffee",
-		price:       100,
+}
+func handleCommand(command string) {
+	switch command {
+	case "menu":
+		fmt.Println("Menu：")
+		lists := getList()
+		for _, product := range lists {
+			fmt.Printf("%v. %v, $%v\n", product.productID, product.productName, product.price)
+		}
+	case "cart":
+		fmt.Println("Your cart is currently empty.")
+	default:
+		fmt.Println("Command should be one of: menu, cart, quit.")
 	}
-	return []List{l1, l2}
 }
 func main() {
-	fmt.Println("Welcome to Jo's coffee shop")
-	fmt.Println("Menu：")
-	lists := getList()
-	for i := 0; i < len(lists); i++ {
-		fmt.Printf("%v.%v $%v\n", lists[i].productID, lists[i].productName, lists[i].price)
+	var msg string
+	fmt.Printf("Welcome to %s\n", restaurant)
+	fmt.Scanln(&msg)
+	for {
+		handleCommand(msg)
+		fmt.Scanln(&msg)
 	}
 }
