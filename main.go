@@ -35,16 +35,21 @@ func handleCommand(command string) {
 	case "cart":
 		fmt.Println("Your cart is currently empty.")
 	case "quit":
-		break
+		fmt.Println("(exit the program with code 0)")
 	default:
 		fmt.Println("Unrecognized command. Command should be one of: menu, cart, quit.")
 	}
 }
 func main() {
 	var msg string
-	fmt.Printf("Welcome to %s\n", RESTAURANT_NAME)
-	for {
+	option := true
+	fmt.Printf("Welcome to %s\n> ", RESTAURANT_NAME)
+	for option {
 		fmt.Scanln(&msg)
 		handleCommand(msg)
+		fmt.Print("> ")
+		if msg == "quit" {
+			option = false
+		}
 	}
 }
