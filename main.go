@@ -11,7 +11,6 @@ type Product struct {
 	ID       int
 	Name     string
 	Price    int
-	CartItem int
 }
 
 func listProducts() []Product {
