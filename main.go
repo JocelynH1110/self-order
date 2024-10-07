@@ -3,16 +3,10 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
 )
 
 const RESTAURANT_NAME string = "Jo's coffee shop!"
-
-type Product struct {
-	ID       int
-	Name     string
-	Price    int
-	CartItem int
-}
 
 func listProducts() []Product {
 	return []Product{
@@ -28,20 +22,26 @@ func listProducts() []Product {
 		},
 	}
 }
+func add(id string, quantity int) {
+
+}
 func handleCommand(command string) {
-	switch command {
+	tokens := strings.Split(command, " ")
+	switch tokens[0] {
 	case "menu":
 		fmt.Println("Menu：")
 		lists := listProducts()
 		for _, product := range lists {
 			fmt.Printf("%d. %s, $%d\n", product.ID, product.Name, product.Price)
 		}
+	case "add":
 	case "cart":
 		fmt.Println("Your cart is currently empty.")
+	//	fmt.Print("add %v ")
 	case "quit":
 		os.Exit(0)
 	default:
-		fmt.Println("Unrecognized command. Command should be one of: menu, cart, quit.")
+		fmt.Println("Unrecognized command. Command should be one of: menu, cart, add, quit.")
 	}
 }
 
@@ -52,5 +52,10 @@ func main() {
 		fmt.Print("> ")
 		fmt.Scanln(&msg)
 		handleCommand(msg)
+		if msg == "cart" {
+			a := CartItem{}
+			fmt.Print("add %v", a.ProductID)
+		}
+
 	}
 }
