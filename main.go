@@ -1,13 +1,17 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+)
 
 const RESTAURANT_NAME string = "Jo's coffee shop!"
 
 type Product struct {
-	ID    int
-	Name  string
-	Price int
+	ID       int
+	Name     string
+	Price    int
+	CartItem int
 }
 
 func listProducts() []Product {
@@ -35,21 +39,18 @@ func handleCommand(command string) {
 	case "cart":
 		fmt.Println("Your cart is currently empty.")
 	case "quit":
-		fmt.Println("(exit the program with code 0)")
+		os.Exit(0)
 	default:
 		fmt.Println("Unrecognized command. Command should be one of: menu, cart, quit.")
 	}
 }
+
 func main() {
 	var msg string
-	option := true
-	fmt.Printf("Welcome to %s\n> ", RESTAURANT_NAME)
-	for option {
+	fmt.Printf("Welcome to %s\n", RESTAURANT_NAME)
+	for {
+		fmt.Print("> ")
 		fmt.Scanln(&msg)
 		handleCommand(msg)
-		fmt.Print("> ")
-		if msg == "quit" {
-			option = false
-		}
 	}
 }
