@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -35,8 +37,28 @@ func handleCommand(command string) {
 			fmt.Printf("%d. %s, $%d\n", product.ID, product.Name, product.Price)
 		}
 	case "add":
+		if len(tokens) != 2 && len(tokens) != 3 {
+			fmt.Println("USAGE: add PRODUCT_ID [QUANTITY]")
+			return
+		}
+		productID, err := strconv.ParseInt(tokens[1], 10, 64)
+		if err != nil {
+			fmt.Println("USAGE: add PRODUCT_ID [QUANTITY]品項錯誤")
+			return
+		}
+		// 如果有兩個參數，才需要解析
+		var quantity int64 = 1
+		if len(tokens) == 3 {
+			quantity, err = strconv.ParseInt(tokens[2], 10, 64)
+			if err != nil {
+				fmt.Println("USAGE: add PRODUCT_ID [QUANTITY]數量錯誤")
+				return
+			}
+		}
+		cart.addItem(int(productID), int(quantity))
 	case "cart":
 		fmt.Println("Your cart is currently empty.")
+		fmt.Printf("%#v\n", cart.CartItems)
 	//	fmt.Print("add %v ")
 	case "quit":
 		os.Exit(0)
@@ -46,16 +68,16 @@ func handleCommand(command string) {
 }
 
 func main() {
-	var msg string
 	fmt.Printf("Welcome to %s\n", RESTAURANT_NAME)
+	scanner := bufio.NewScanner(os.Stdin)
 	for {
 		fmt.Print("> ")
-		fmt.Scanln(&msg)
-		handleCommand(msg)
-		if msg == "cart" {
-			a := CartItem{}
-			fmt.Print("add %v", a.ProductID)
+		next := scanner.Scan()
+		if !next {
+			fmt.Println("\nBye~")
+			return
 		}
-
+		line := scanner.Text()
+		handleCommand(line)
 	}
 }
