@@ -5,28 +5,12 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+
 	"strings"
 )
 
 const RESTAURANT_NAME string = "Jo's coffee shop!"
 
-func listProducts() []Product {
-	return []Product{
-		{
-			ID:    1,
-			Name:  "Latte",
-			Price: 150,
-		},
-		{
-			ID:    2,
-			Name:  "Filter coffee",
-			Price: 100,
-		},
-	}
-}
-func add(id string, quantity int) {
-
-}
 func handleCommand(command string) {
 	tokens := strings.Split(command, " ")
 	switch tokens[0] {
@@ -43,7 +27,7 @@ func handleCommand(command string) {
 		}
 		productID, err := strconv.ParseInt(tokens[1], 10, 64)
 		if err != nil {
-			fmt.Println("USAGE: add PRODUCT_ID [QUANTITY]品項錯誤")
+			fmt.Println("USAGE: add PRODUCT_ID [QUANTITY]")
 			return
 		}
 		// 如果有兩個參數，才需要解析
@@ -51,15 +35,21 @@ func handleCommand(command string) {
 		if len(tokens) == 3 {
 			quantity, err = strconv.ParseInt(tokens[2], 10, 64)
 			if err != nil {
-				fmt.Println("USAGE: add PRODUCT_ID [QUANTITY]數量錯誤")
+				fmt.Println("USAGE: add PRODUCT_ID [QUANTITY]")
 				return
 			}
 		}
 		cart.addItem(int(productID), int(quantity))
 	case "cart":
-		fmt.Println("Your cart is currently empty.")
-		fmt.Printf("%#v\n", cart.CartItems)
-	//	fmt.Print("add %v ")
+		if cart.CartItems == nil {
+			fmt.Println("Your cart is currently empty.")
+			return
+		}
+		fmt.Printf("You have %v item(s) in the shopping cart.\n", len(cart.CartItems))
+		for index, item := range cart.CartItems {
+			product := findProductByID(item.ProductID)
+			fmt.Printf("%d. %s, %d x %d = $%d\n", index+1, product.Name, item.Quantity, product.Price, item.Quantity*product.Price)
+		}
 	case "quit":
 		os.Exit(0)
 	default:
