@@ -21,6 +21,7 @@ func listProducts() []Product {
 	}
 }
 func findProductByID(id int) *Product {
+	// 比對輸入的商品編號是否存在
 	for _, item := range listProducts() {
 		if id == item.ID {
 			return &item
