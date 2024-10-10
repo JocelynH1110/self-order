@@ -11,6 +11,16 @@ import (
 
 const RESTAURANT_NAME string = "Jo's coffee shop!"
 
+func parseRemoveCommand(tokens []string) (ok bool, productID int) {
+	if len(tokens) != 2 {
+		return
+	}
+	id, err := strconv.ParseInt(tokens[1], 10, 64)
+	if err != nil || id < 1 {
+		return
+	}
+	return true, int(id)
+}
 func parseAddCommand(tokens []string) (ok bool, productID int, quantity int) {
 	if len(tokens) != 2 && len(tokens) != 3 {
 		return
@@ -38,7 +48,12 @@ func handleCommand(command string) {
 		for _, product := range lists {
 			fmt.Printf("%d. %s, $%d\n", product.ID, product.Name, product.Price)
 		}
-
+	case "remove":
+		if ok, productID := parseRemoveCommand(tokens); ok {
+			cart.removeItem(productID)
+			return
+		}
+		fmt.Println("USAGE: add PRODUCT_ID [QUANTITY]")
 	case "add":
 		if ok, productID, quantity := parseAddCommand(tokens); ok {
 			cart.addItem(productID, quantity)
