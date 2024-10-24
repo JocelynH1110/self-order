@@ -2,11 +2,15 @@ package main
 
 import (
 	"bufio"
+	"database/sql"
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 
 	"strings"
+
+	_ "github.com/mattn/go-sqlite3"
 )
 
 const RESTAURANT_NAME string = "Jo's coffee shop!"
@@ -39,12 +43,15 @@ func parseAddCommand(tokens []string) (ok bool, productID int, quantity int) {
 	return true, int(id), int(qty)
 }
 
-func handleCommand(command string) {
+func handleCommand(db *sql.DB, command string) {
 	tokens := strings.Split(command, " ")
 	switch tokens[0] {
 	case "menu":
 		fmt.Println("Menu：")
-		lists := listProducts()
+		lists, err := listProducts(db)
+		if err != nil {
+			log.Fatal(err)
+		}
 		for _, product := range lists {
 			fmt.Printf("%d. %s, $%d\n", product.ID, product.Name, product.Price)
 		}
@@ -70,7 +77,7 @@ func handleCommand(command string) {
 
 		// 顯示已輸入並存在的商品列表
 		for index, item := range cart.CartItems {
-			product := findProductByID(item.ProductID)
+			product, _ := findProductByID(db, item.ProductID)
 			if product == nil {
 				continue
 			}
@@ -86,6 +93,12 @@ func handleCommand(command string) {
 }
 
 func main() {
+	db, err := sql.Open("sqlite3", "db/dev.db")
+	if err != nil {
+		log.Fatalf("ERROR initializing database: %s", err)
+	}
+	defer db.Close()
+
 	fmt.Printf("Welcome to %s\n", RESTAURANT_NAME)
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
@@ -96,6 +109,6 @@ func main() {
 			return
 		}
 		line := scanner.Text()
-		handleCommand(line)
+		handleCommand(db, line)
 	}
 }
