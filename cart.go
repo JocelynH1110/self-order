@@ -42,6 +42,5 @@ func (c *Cart) removeItem(productID int) {
 	index := c.findProductInCart(productID)
 	if index >= 0 {
 		c.CartItems = append(c.CartItems[:index], c.CartItems[index+1:]...)
-		return
 	}
 }

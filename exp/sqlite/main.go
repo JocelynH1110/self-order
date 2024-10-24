@@ -2,6 +2,10 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
+	"log"
+
+	_ "github.com/mattn/go-sqlite3"
 )
 
 type Product struct {
@@ -11,7 +15,6 @@ type Product struct {
 	Description *string
 }
 
-// listProducts 所有商品列表
 func listProducts(db *sql.DB) ([]Product, error) {
 	rows, err := db.Query("select id,name,price,description from products order by id")
 	if err != nil {
@@ -31,13 +34,21 @@ func listProducts(db *sql.DB) ([]Product, error) {
 	return result, nil
 }
 
-// findProductByID 比對消費者輸入的編號跟資料庫中商品是否一致
-func findProductByID(db *sql.DB, id int) (*Product, error) {
-	// 比對輸入的商品編號是否存在
-	row := db.QueryRow("select id, name, price, description from products where id = ?", id)
-	var result Product
-	if err := row.Scan(&result.ID, &result.Name, &result.Price, &result.Description); err != nil {
-		return nil, err
+func main() {
+	db, err := sql.Open("sqlite3", "db/dev.db")
+	if err != nil {
+		log.Fatalf("ERROR initializing database: %s", err)
 	}
-	return &result, nil
+	defer db.Close()
+
+	row := db.QueryRow("select 2+2")
+	var result int
+	if err := row.Scan(&result); err != nil {
+		log.Fatal(err)
+	}
+	products, err := listProducts(db)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("%#v\n", products)
 }
