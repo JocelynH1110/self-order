@@ -43,6 +43,7 @@ func parseAddCommand(tokens []string) (ok bool, productID int, quantity int) {
 	return true, int(id), int(qty)
 }
 
+// 現在 cart 依賴資料庫連接，不能存在全域變數內，故可在 handleCommand 內初始化
 func handleCommand(db *sql.DB, command string) {
 	tokens := strings.Split(command, " ")
 	switch tokens[0] {
