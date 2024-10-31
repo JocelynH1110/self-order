@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>{{.Title}}</title>
+</head>
+
+<body>
+  <h1>{{.Title}}</h1>
+  <h2>Menu</h2>
+  <ol>
+    {{range .Products}}
+      <li><strong>{{.Name}}</strong>, ${{.Price}}</li>
+    {{end}}
+  </ol>
+</body>
+
+</html>

@@ -2,7 +2,7 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 
@@ -11,34 +11,42 @@ import (
 
 const RESTAURANT_NAME string = "Jo's coffee shop!"
 
-/*func parseRemoveCommand(tokens []string) (ok bool, productID int) {
-	if len(tokens) != 2 {
-		return
+/*
+	func parseRemoveCommand(tokens []string) (ok bool, productID int) {
+		if len(tokens) != 2 {
+			return
+		}
+		id, err := strconv.ParseInt(tokens[1], 10, 64)
+		if err != nil || id < 1 {
+			return
+		}
+		return true, int(id)
 	}
-	id, err := strconv.ParseInt(tokens[1], 10, 64)
-	if err != nil || id < 1 {
-		return
+
+	func parseAddCommand(tokens []string) (ok bool, productID int, quantity int) {
+		if len(tokens) != 2 && len(tokens) != 3 {
+			return
+		}
+		id, err := strconv.ParseInt(tokens[1], 10, 64)
+		if err != nil || id < 1 {
+			return
+		}
+		if len(tokens) == 2 {
+			return true, int(id), 1
+		}
+		qty, err := strconv.ParseInt(tokens[2], 10, 64)
+		if err != nil || qty < 1 {
+			return
+		}
+		return true, int(id), int(qty)
 	}
-	return true, int(id)
-}
-func parseAddCommand(tokens []string) (ok bool, productID int, quantity int) {
-	if len(tokens) != 2 && len(tokens) != 3 {
-		return
-	}
-	id, err := strconv.ParseInt(tokens[1], 10, 64)
-	if err != nil || id < 1 {
-		return
-	}
-	if len(tokens) == 2 {
-		return true, int(id), 1
-	}
-	qty, err := strconv.ParseInt(tokens[2], 10, 64)
-	if err != nil || qty < 1 {
-		return
-	}
-	return true, int(id), int(qty)
-}
 */
+type MenuProps struct {
+	Title    string
+	Products []Product
+}
+
+var menuTemplate = template.Must(template.ParseFiles("./templates/index.html.tmpl"))
 
 func menuHandler(db *sql.DB) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -46,11 +54,10 @@ func menuHandler(db *sql.DB) http.Handler {
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Fprintf(w, `<title>%s</title><h1>%s</h1><h2>Menu</h2><ol>`, RESTAURANT_NAME, RESTAURANT_NAME)
-		for _, product := range lists {
-			fmt.Fprintf(w, "<li>%s, $%d</li>\n", product.Name, product.Price)
-		}
-
+		menuTemplate.Execute(w, MenuProps{
+			Title:    RESTAURANT_NAME,
+			Products: lists,
+		})
 	})
 }
 
